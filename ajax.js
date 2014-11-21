@@ -1,4 +1,13 @@
+//get the list of breeds for the select dropdown
+function getBreedsOptions(){
+  
+}
 
+function submitPuppy(submission){
+  $.ajax( {
+    //TODO: details
+  });
+}
 
 function getPuppies(){
   $.ajax( {
@@ -43,6 +52,16 @@ function getPuppies(){
 };
 
 
-$(document).ready(function(){
-  $('#refresh').click(getPuppies());
+$( document ).ready(function(){
+  $( '#refresh' ).click( getPuppies() );
+  
+  $( "#puppy-form" ).submit(function( event ) {
+    submission = $( this ).serializeArray(); //'this' is the whole form
+    
+    //TODO: submit to the Rails app
+    
+    //refresh puppy list
+    getPuppies();
+    event.preventDefault();
+  });
 });
