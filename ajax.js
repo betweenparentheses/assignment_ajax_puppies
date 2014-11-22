@@ -1,10 +1,17 @@
+//get the list of breeds for the select dropdown
+function getBreedsOptions(){
+  
+}
 
+function submitPuppy(submission){
+  $.ajax( {
+    //TODO: details
+  });
+}
 
 function getPuppies(){
   $.ajax( {
 
-    // The URL (path) for the request
-    // The below would submit to http://www.yoursite.com/post
     url: "http://rocky-dusk-3509.herokuapp.com/puppies.json",
 
     // the data to send (will be converted to a query string)
@@ -12,31 +19,24 @@ function getPuppies(){
     // data: {
     //     id: 123
     // },
-
-    // HTTP verb (aka "Type" of request)
     type: "GET",
-
-    // the type of data we expect back
     dataType : "json",
 
-    // Success callback to run if the request succeeds.
-    // The response is passed to the function
-    // as a variable, usually called `data` or `json`
     success: function( json ) {
       $('#puppy-list').empty();
-      json.forEach(function(puppy){
+      //newest to oldest
+      puppies = json.reverse();
+      
+      puppies.forEach(function(puppy){
+      
         //turn milliseconds into minutes
         minutesAgo = Math.floor(new Date(Date.now()- new Date(puppy.created_at)) / 60000);
         $puppyEntry = $("<li><strong>"+puppy.name+"</strong>("+puppy.breed.name+"), created "+minutesAgo +" minutes ago -- <a href = ''>adopt</a></li>");
         $('#puppy-list').append($puppyEntry);
       });
-      console.log(stuff);
     },
 
     // Error callback to run if the request fails
-    // (e.g. server returns an error code like 301)
-    // The raw request and any status codes are 
-    // passed to the callback
     error: function( xhr, status, errorThrown ) {
         alert( "Sorry, there was a problem!" );
         console.log( "Error: " + errorThrown );
@@ -52,8 +52,16 @@ function getPuppies(){
 };
 
 
-$(document).ready(function(){
-  $('#refresh').click(getPuppies());
-
-
+$( document ).ready(function(){
+  $( '#refresh' ).click( getPuppies() );
+  
+  $( "#puppy-form" ).submit(function( event ) {
+    submission = $( this ).serializeArray(); //'this' is the whole form
+    
+    //TODO: submit to the Rails app
+    
+    //refresh puppy list
+    getPuppies();
+    event.preventDefault();
+  });
 });
