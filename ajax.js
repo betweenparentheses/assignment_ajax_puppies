@@ -27,7 +27,7 @@ function getPuppies(){
       json.forEach(function(puppy){
         //turn milliseconds into minutes
         minutesAgo = Math.floor(new Date(Date.now()- new Date(puppy.created_at)) / 60000);
-        $puppyEntry = $("<li>"+puppy.name+"("+puppy.breed.name+"), created "+minutesAgo +" minutes ago -- <a href = ''>adopt</a></li>");
+        $puppyEntry = $("<li><strong>"+puppy.name+"</strong>("+puppy.breed.name+"), created "+minutesAgo +" minutes ago -- <a href = ''>adopt</a></li>");
         $('#puppy-list').append($puppyEntry);
       });
       console.log(stuff);
