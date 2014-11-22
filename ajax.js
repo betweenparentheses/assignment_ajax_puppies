@@ -1,11 +1,53 @@
 //get the list of breeds for the select dropdown
 function getBreedsOptions(){
-  
+  $.ajax( {
+
+    url: "http://rocky-dusk-3509.herokuapp.com/breeds.json",
+    type: "GET",
+    dataType : "json",
+
+    success: function( json ) {
+      $('#breeds')
+      
+      json.forEach(function(breed){
+      
+        //turn milliseconds into minutes
+        var $breedOption = $("<option value='"+breed.id +"'>"+breed.name+"</option>");
+        $('#breeds').append($breedOption);
+      });
+    },
+
+    // Error callback to run if the request fails
+    error: function( xhr, status, errorThrown ) {
+        alert( "Sorry, there was a problem!" );
+        console.log( "Error: " + errorThrown );
+        console.log( "Status: " + status );
+        console.dir( xhr );
+    }
+  });
 }
 
 function submitPuppy(submission){
   $.ajax( {
-    //TODO: details
+    url: "http://rocky-dusk-3509.herokuapp.com/puppies.json",
+
+    data: { name: submission.name,
+        breed_id: submission.breed_id },
+
+    type: "POST",
+    dataType : "json",
+
+    success: function( json ) {
+      getPuppies();
+    },
+
+    // Error callback to run if the request fails
+    error: function( xhr, status, errorThrown ) {
+        alert( "Sorry, there was a problem!" );
+        console.log( "Error: " + errorThrown );
+        console.log( "Status: " + status );
+        console.dir( xhr );
+    },
   });
 }
 
@@ -53,12 +95,14 @@ function getPuppies(){
 
 
 $( document ).ready(function(){
+  getBreedsOptions();
+
   $( '#refresh' ).click( getPuppies() );
   
+
   $( "#puppy-form" ).submit(function( event ) {
     submission = $( this ).serializeArray(); //'this' is the whole form
-    
-    //TODO: submit to the Rails app
+    submitPuppy(submission);
     
     //refresh puppy list
     getPuppies();
