@@ -31,11 +31,12 @@ function submitPuppy(submission){
   $.ajax( {
     url: "http://rocky-dusk-3509.herokuapp.com/puppies.json",
 
-    data: { name: submission.name,
-        breed_id: submission.breed_id },
+    data: JSON.stringify({ name: submission[0].value,
+        breed_id: submission[1].value }),
 
     type: "POST",
     dataType : "json",
+    contentType : "application/json",
 
     success: function( json ) {
       getPuppies();
@@ -50,6 +51,34 @@ function submitPuppy(submission){
     },
   });
 }
+
+function deletePuppy(target){
+  var puppyID = target.data('id');
+  
+  $.ajax( {
+    url: "http://rocky-dusk-3509.herokuapp.com/puppies/"+puppyID+".json",
+
+    // data: JSON.stringify({ id: id }),
+
+    type: "DELETE",
+    dataType : "json",
+    contentType : "application/json",
+
+    success: function( json ) {
+      getPuppies();
+    },
+
+    // Error callback to run if the request fails
+    error: function( xhr, status, errorThrown ) {
+        alert( "Sorry, there was a problem!" );
+        console.log( "Error: " + errorThrown );
+        console.log( "Status: " + status );
+        console.dir( xhr );
+    },
+  });
+}
+
+
 
 function getPuppies(){
   $.ajax( {
@@ -73,7 +102,7 @@ function getPuppies(){
       
         //turn milliseconds into minutes
         minutesAgo = Math.floor(new Date(Date.now()- new Date(puppy.created_at)) / 60000);
-        $puppyEntry = $("<li><strong>"+puppy.name+"</strong>("+puppy.breed.name+"), created "+minutesAgo +" minutes ago -- <a href = ''>adopt</a></li>");
+        $puppyEntry = $("<li><strong>"+puppy.name+"</strong>("+puppy.breed.name+"), created "+minutesAgo +" minutes ago -- <a class = 'delete-link' href = '' data-id = '"+ puppy.id +"'>adopt</a></li>");
         $('#puppy-list').append($puppyEntry);
       });
     },
@@ -98,6 +127,13 @@ $( document ).ready(function(){
   getBreedsOptions();
 
   $( '#refresh' ).click( getPuppies() );
+
+
+  $( 'body').click('.delete-link', function(event){
+    $target = $(event.target);
+    deletePuppy($target);
+    event.preventDefault();
+  });
   
 
   $( "#puppy-form" ).submit(function( event ) {
