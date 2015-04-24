@@ -2,15 +2,15 @@
 function getBreedsOptions(){
   $.ajax( {
 
-    url: "http://rocky-dusk-3509.herokuapp.com/breeds.json",
+    url: "http://pacific-stream-9205.herokuapp.com/breeds.json",
     type: "GET",
     dataType : "json",
 
-    success: function( json ) {
+    success: function( response ) {
       $('#breeds')
-      
-      json.forEach(function(breed){
-      
+
+      response.forEach( function(breed){
+
         //turn milliseconds into minutes
         var $breedOption = $("<option value='"+breed.id +"'>"+breed.name+"</option>");
         $('#breeds').append($breedOption);
@@ -29,10 +29,10 @@ function getBreedsOptions(){
 
 function submitPuppy(submission){
   $.ajax( {
-    url: "http://rocky-dusk-3509.herokuapp.com/puppies.json",
+    url: "http://pacific-stream-9205.herokuapp.com/puppies.json",
 
     data: JSON.stringify({ name: submission[0].value,
-        breed_id: submission[1].value }),
+                           breed_id: submission[1].value }),
 
     type: "POST",
     dataType : "json",
@@ -54,14 +54,12 @@ function submitPuppy(submission){
 
 function deletePuppy(target){
   var puppyID = target.data('id');
-  
+
   $.ajax( {
-    url: "http://rocky-dusk-3509.herokuapp.com/puppies/"+puppyID+".json",
+    url: "http://pacific-stream-9205.herokuapp.com/puppies/"+puppyID+".json",
 
-    // data: JSON.stringify({ id: id }),
-
+    // No need for data. It's all in the path
     type: "DELETE",
-    dataType : "json",
     contentType : "application/json",
 
     success: function( json ) {
@@ -83,7 +81,7 @@ function deletePuppy(target){
 function getPuppies(){
   $.ajax( {
 
-    url: "http://rocky-dusk-3509.herokuapp.com/puppies.json",
+    url: "http://pacific-stream-9205.herokuapp.com/puppies.json",
 
     // the data to send (will be converted to a query string)
     // note that this is an object
@@ -97,9 +95,9 @@ function getPuppies(){
       $('#puppy-list').empty();
       //newest to oldest
       puppies = json.reverse();
-      
+
       puppies.forEach(function(puppy){
-      
+
         //turn milliseconds into minutes
         minutesAgo = Math.floor(new Date(Date.now()- new Date(puppy.created_at)) / 60000);
         $puppyEntry = $("<li><strong>"+puppy.name+"</strong>("+puppy.breed.name+"), created "+minutesAgo +" minutes ago -- <a class = 'delete-link' href = '' data-id = '"+ puppy.id +"'>adopt</a></li>");
@@ -129,19 +127,17 @@ $( document ).ready(function(){
   $( '#refresh' ).click( getPuppies() );
 
 
-  $( 'body').click('.delete-link', function(event){
-    $target = $(event.target);
+  $( 'body').on('click', '.delete-link', function(event){
+    $target = $(this);
     deletePuppy($target);
     event.preventDefault();
   });
-  
 
-  $( "#puppy-form" ).submit(function( event ) {
-    submission = $( this ).serializeArray(); //'this' is the whole form
+
+  $( "#puppy-form" ).on('submit', function( event ) {
+    submission = $( this ).serializeArray(); //'event.target' is the whole form
     submitPuppy(submission);
-    
-    //refresh puppy list
-    getPuppies();
+
     event.preventDefault();
   });
 });
